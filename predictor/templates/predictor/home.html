@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Construction Risk Predictor</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 40px 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        /* ==================================================
+           HERO BANNER
+           ================================================== */
+
+        .hero {
+            background: linear-gradient(
+                135deg,
+                #1b2a1b 0%,
+                #2d4a2d 40%,
+                #1a3a1a 70%,
+                #0f1f0f 100%
+            );
+            border-radius: 14px;
+            padding: 45px 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border: 1px solid #3a5a3a;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.01) 10px,
+                rgba(255, 255, 255, 0.01) 20px
+            );
+            pointer-events: none;
+        }
+
+        .hero-icon-left,
+        .hero-icon-right {
+            font-size: 52px;
+            vertical-align: middle;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+            display: inline;
+        }
+
+        .hero-icon-left {
+            margin-right: 14px;
+        }
+
+        .hero-icon-right {
+            margin-left: 14px;
+        }
+
+        h1 {
+            margin: 0;
+            letter-spacing: 4px;
+            line-height: 1.4;
+            font-size: 32px;
+        }
+
+        .hero-main {
+            font-weight: 400;
+            color: #d4e8d4;
+            display: inline;
+        }
+
+        .hero-accent {
+            font-weight: 900;
+            color: #f0a500;
+            display: inline;
+        }
+
+        .hero-divider {
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #f0a500, #ffd166);
+            margin: 16px auto;
+            border-radius: 2px;
+        }
+
+        .hero-subtitle {
+            color: #8aad8a;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        /* ==================================================
+           FORM
+           ================================================== */
+
+        form {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            color: #0d6efd;
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        .section-title:first-child {
+            margin-top: 0;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+            color: #333;
+            text-align: left;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.1);
+        }
+
+        /* ==================================================
+           FIELD ERROR STYLING
+           ================================================== */
+
+        input.input-error,
+        select.input-error {
+            border-color: #e53935;
+            background: #fff5f5;
+            box-shadow: 0 0 0 2px rgba(229, 57, 53, 0.15);
+        }
+
+        .field-error {
+            margin-top: 5px;
+            font-size: 13px;
+            color: #e53935;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .field-error::before {
+            content: "⚠";
+            font-size: 13px;
+        }
+
+        /* ==================================================
+           VALIDATION SUMMARY BANNER
+           ================================================== */
+
+        .validation-banner {
+            margin-bottom: 20px;
+            padding: 14px 18px;
+            background: #fff3f3;
+            border: 1px solid #e53935;
+            border-radius: 8px;
+            color: #b71c1c;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .validation-banner::before {
+            content: "✖";
+            font-size: 16px;
+        }
+
+        /* ==================================================
+           SUBMIT BUTTON
+           ================================================== */
+
+        .btn {
+            display: block;
+            width: 100%;
+            margin-top: 30px;
+            background: #2d4a2d;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: background 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #1b2a1b;
+        }
+
+        /* ==================================================
+           NEW ASSESSMENT BUTTON
+           ================================================== */
+
+        .btn-new-assessment {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            background: white;
+            color: #2d4a2d;
+            padding: 15px;
+            border: 2px solid #2d4a2d;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            letter-spacing: 1px;
+        }
+
+        .btn-new-assessment:hover {
+            background: #2d4a2d;
+            color: white;
+        }
+
+        /* ==================================================
+           RESULT CARD
+           ================================================== */
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid;
+        }
+
+        .result-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .risk-level-number {
+            font-size: 64px;
+            font-weight: bold;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .risk-label {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 6px;
+            margin-bottom: 12px;
+        }
+
+        .confidence {
+            font-size: 16px;
+            color: #444;
+            font-weight: normal;
+        }
+
+        /* Green — Low Risk */
+        .result-green {
+            background: #e8f5e9;
+            border-color: #b7dfb9;
+        }
+
+        .result-green .risk-level-number,
+        .result-green .risk-label {
+            color: #198754;
+        }
+
+        /* Orange — Medium Risk */
+        .result-orange {
+            background: #fff8e1;
+            border-color: #ffe082;
+        }
+
+        .result-orange .risk-level-number,
+        .result-orange .risk-label {
+            color: #e65100;
+        }
+
+        /* Red — High Risk */
+        .result-red {
+            background: #fdecea;
+            border-color: #f1aeb5;
+        }
+
+        .result-red .risk-level-number,
+        .result-red .risk-label {
+            color: #b71c1c;
+        }
+
+        /* ==================================================
+           CLASS PROBABILITIES
+           ================================================== */
+
+        .probabilities {
+            margin-top: 20px;
+            padding: 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .probabilities-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2d4a2d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+
+        .prob-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 12px;
+        }
+
+        .prob-label {
+            width: 120px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            flex-shrink: 0;
+        }
+
+        .prob-bar-wrapper {
+            flex: 1;
+            background: #e9ecef;
+            border-radius: 6px;
+            height: 14px;
+            overflow: hidden;
+        }
+
+        .prob-bar {
+            height: 100%;
+            background: #2d4a2d;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        .prob-value {
+            width: 55px;
+            text-align: right;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            flex-shrink: 0;
+        }
+
+        /* ==================================================
+           RECOMMENDATION CARD
+           ================================================== */
+
+        .recommendation {
+            margin-top: 20px;
+            padding: 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            text-align: left;
+        }
+
+        .recommendation-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2d4a2d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+
+        .recommendation ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .recommendation ul li {
+            margin-bottom: 10px;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* ==================================================
+           ERROR
+           ================================================== */
+
+        .error {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8d7da;
+            border: 1px solid #f1aeb5;
+            border-radius: 8px;
+            color: #842029;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        .error-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* ==================================================
+           RESPONSIVE
+           ================================================== */
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 20px 10px;
+            }
+
+            form {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 20px;
+                letter-spacing: 2px;
+            }
+
+            .hero {
+                padding: 30px 15px;
+            }
+
+            .hero-icon-left,
+            .hero-icon-right {
+                font-size: 36px;
+            }
+
+            .risk-level-number {
+                font-size: 48px;
+            }
+
+            .prob-label {
+                width: 90px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <!-- ==================================================
+         HERO BANNER
+         ================================================== -->
+
+    <div class="hero">
+
+        <h1>
+            <span class="hero-icon-left">🚧</span>
+            <span class="hero-main">CONSTRUCTION RISK</span>
+            <span class="hero-accent"> PREDICTOR</span>
+            <span class="hero-icon-right">🏗️</span>
+        </h1>
+
+        <div class="hero-divider"></div>
+
+        <p class="hero-subtitle">
+            AI-Powered Site Risk Assessment Tool
+        </p>
+
+    </div>
+
+
+    <!-- ==================================================
+         PREDICTION FORM
+         ================================================== -->
+
+    <form method="POST" id="prediction-form">
+
+        {% csrf_token %}
+
+        {% if errors %}
+            <div class="validation-banner">
+                {{ errors|length }} field{{ errors|length|pluralize }} need attention before predicting.
+            </div>
+        {% endif %}
+
+        <h2 class="section-title">Project Information</h2>
+
+        <div class="field">
+            <label for="project_type">Project Type</label>
+            <input
+                type="text"
+                id="project_type"
+                name="project_type"
+                placeholder="e.g. Residential"
+                value="{{ request.POST.project_type }}"
+                class="{% if errors.project_type %}input-error{% endif %}"
+            >
+            {% if errors.project_type %}
+                <div class="field-error">{{ errors.project_type }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="location">Location</label>
+            <input
+                type="text"
+                id="location"
+                name="location"
+                placeholder="e.g. Nairobi"
+                value="{{ request.POST.location }}"
+                class="{% if errors.location %}input-error{% endif %}"
+            >
+            {% if errors.location %}
+                <div class="field-error">{{ errors.location }}</div>
+            {% endif %}
+        </div>
+
+        <h2 class="section-title">Project Timeline</h2>
+
+        <div class="field">
+            <label for="start_year">Start Year</label>
+            <input
+                type="number"
+                id="start_year"
+                name="start_year"
+                placeholder="e.g. 2026"
+                value="{{ request.POST.start_year }}"
+                class="{% if errors.start_year %}input-error{% endif %}"
+            >
+            {% if errors.start_year %}
+                <div class="field-error">{{ errors.start_year }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="start_month">Start Month</label>
+            <input
+                type="number"
+                id="start_month"
+                name="start_month"
+                min="1"
+                max="12"
+                placeholder="1 - 12"
+                value="{{ request.POST.start_month }}"
+                class="{% if errors.start_month %}input-error{% endif %}"
+            >
+            {% if errors.start_month %}
+                <div class="field-error">{{ errors.start_month }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="end_year">End Year</label>
+            <input
+                type="number"
+                id="end_year"
+                name="end_year"
+                placeholder="e.g. 2027"
+                value="{{ request.POST.end_year }}"
+                class="{% if errors.end_year %}input-error{% endif %}"
+            >
+            {% if errors.end_year %}
+                <div class="field-error">{{ errors.end_year }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="end_month">End Month</label>
+            <input
+                type="number"
+                id="end_month"
+                name="end_month"
+                min="1"
+                max="12"
+                placeholder="1 - 12"
+                value="{{ request.POST.end_month }}"
+                class="{% if errors.end_month %}input-error{% endif %}"
+            >
+            {% if errors.end_month %}
+                <div class="field-error">{{ errors.end_month }}</div>
+            {% endif %}
+        </div>
+
+        <h2 class="section-title">Cost and Duration</h2>
+
+        <div class="field">
+            <label for="planned_cost">Planned Cost</label>
+            <input
+                type="number"
+                step="any"
+                id="planned_cost"
+                name="planned_cost"
+                placeholder="e.g. 5000000"
+                value="{{ request.POST.planned_cost }}"
+                class="{% if errors.planned_cost %}input-error{% endif %}"
+            >
+            {% if errors.planned_cost %}
+                <div class="field-error">{{ errors.planned_cost }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="planned_duration">Planned Duration (Days)</label>
+            <input
+                type="number"
+                step="any"
+                id="planned_duration"
+                name="planned_duration"
+                placeholder="e.g. 180"
+                value="{{ request.POST.planned_duration }}"
+                class="{% if errors.planned_duration %}input-error{% endif %}"
+            >
+            {% if errors.planned_duration %}
+                <div class="field-error">{{ errors.planned_duration }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="calculated_duration_days">Calculated Duration (Days)</label>
+            <input
+                type="number"
+                step="any"
+                id="calculated_duration_days"
+                name="calculated_duration_days"
+                placeholder="e.g. 175"
+                value="{{ request.POST.calculated_duration_days }}"
+                class="{% if errors.calculated_duration_days %}input-error{% endif %}"
+            >
+            {% if errors.calculated_duration_days %}
+                <div class="field-error">{{ errors.calculated_duration_days }}</div>
+            {% endif %}
+        </div>
+
+        <h2 class="section-title">Site and Structural Conditions</h2>
+
+        <div class="field">
+            <label for="vibration_level">Vibration Level</label>
+            <input
+                type="number"
+                step="any"
+                id="vibration_level"
+                name="vibration_level"
+                placeholder="Enter vibration level"
+                value="{{ request.POST.vibration_level }}"
+                class="{% if errors.vibration_level %}input-error{% endif %}"
+            >
+            {% if errors.vibration_level %}
+                <div class="field-error">{{ errors.vibration_level }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="crack_width">Crack Width</label>
+            <input
+                type="number"
+                step="any"
+                id="crack_width"
+                name="crack_width"
+                placeholder="Enter crack width"
+                value="{{ request.POST.crack_width }}"
+                class="{% if errors.crack_width %}input-error{% endif %}"
+            >
+            {% if errors.crack_width %}
+                <div class="field-error">{{ errors.crack_width }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="load_bearing_capacity">Load Bearing Capacity</label>
+            <input
+                type="number"
+                step="any"
+                id="load_bearing_capacity"
+                name="load_bearing_capacity"
+                placeholder="Enter load bearing capacity"
+                value="{{ request.POST.load_bearing_capacity }}"
+                class="{% if errors.load_bearing_capacity %}input-error{% endif %}"
+            >
+            {% if errors.load_bearing_capacity %}
+                <div class="field-error">{{ errors.load_bearing_capacity }}</div>
+            {% endif %}
+        </div>
+
+        <h2 class="section-title">Environmental Conditions</h2>
+
+        <div class="field">
+            <label for="temperature">Temperature (°C)</label>
+            <input
+                type="number"
+                step="any"
+                id="temperature"
+                name="temperature"
+                placeholder="e.g. 25"
+                value="{{ request.POST.temperature }}"
+                class="{% if errors.temperature %}input-error{% endif %}"
+            >
+            {% if errors.temperature %}
+                <div class="field-error">{{ errors.temperature }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="humidity">Humidity (%)</label>
+            <input
+                type="number"
+                step="any"
+                id="humidity"
+                name="humidity"
+                placeholder="e.g. 60"
+                value="{{ request.POST.humidity }}"
+                class="{% if errors.humidity %}input-error{% endif %}"
+            >
+            {% if errors.humidity %}
+                <div class="field-error">{{ errors.humidity }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="weather_condition">Weather Condition</label>
+            <input
+                type="text"
+                id="weather_condition"
+                name="weather_condition"
+                placeholder="e.g. Sunny"
+                value="{{ request.POST.weather_condition }}"
+                class="{% if errors.weather_condition %}input-error{% endif %}"
+            >
+            {% if errors.weather_condition %}
+                <div class="field-error">{{ errors.weather_condition }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="air_quality_index">Air Quality Index</label>
+            <input
+                type="number"
+                step="any"
+                id="air_quality_index"
+                name="air_quality_index"
+                placeholder="Enter AQI"
+                value="{{ request.POST.air_quality_index }}"
+                class="{% if errors.air_quality_index %}input-error{% endif %}"
+            >
+            {% if errors.air_quality_index %}
+                <div class="field-error">{{ errors.air_quality_index }}</div>
+            {% endif %}
+        </div>
+
+        <h2 class="section-title">Resource Usage</h2>
+
+        <div class="field">
+            <label for="energy_consumption">Energy Consumption</label>
+            <input
+                type="number"
+                step="any"
+                id="energy_consumption"
+                name="energy_consumption"
+                placeholder="Enter energy consumption"
+                value="{{ request.POST.energy_consumption }}"
+                class="{% if errors.energy_consumption %}input-error{% endif %}"
+            >
+            {% if errors.energy_consumption %}
+                <div class="field-error">{{ errors.energy_consumption }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="material_usage">Material Usage</label>
+            <input
+                type="number"
+                step="any"
+                id="material_usage"
+                name="material_usage"
+                placeholder="Enter material usage"
+                value="{{ request.POST.material_usage }}"
+                class="{% if errors.material_usage %}input-error{% endif %}"
+            >
+            {% if errors.material_usage %}
+                <div class="field-error">{{ errors.material_usage }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="labor_hours">Labor Hours</label>
+            <input
+                type="number"
+                step="any"
+                id="labor_hours"
+                name="labor_hours"
+                placeholder="Enter labor hours"
+                value="{{ request.POST.labor_hours }}"
+                class="{% if errors.labor_hours %}input-error{% endif %}"
+            >
+            {% if errors.labor_hours %}
+                <div class="field-error">{{ errors.labor_hours }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="equipment_utilization">Equipment Utilization (%)</label>
+            <input
+                type="number"
+                step="any"
+                id="equipment_utilization"
+                name="equipment_utilization"
+                placeholder="Enter equipment utilization"
+                value="{{ request.POST.equipment_utilization }}"
+                class="{% if errors.equipment_utilization %}input-error{% endif %}"
+            >
+            {% if errors.equipment_utilization %}
+                <div class="field-error">{{ errors.equipment_utilization }}</div>
+            {% endif %}
+        </div>
+
+        <h2 class="section-title">Safety and Anomaly Information</h2>
+
+        <div class="field">
+            <label for="accident_count">Accident Count</label>
+            <input
+                type="number"
+                step="any"
+                id="accident_count"
+                name="accident_count"
+                min="0"
+                placeholder="e.g. 0"
+                value="{{ request.POST.accident_count }}"
+                class="{% if errors.accident_count %}input-error{% endif %}"
+            >
+            {% if errors.accident_count %}
+                <div class="field-error">{{ errors.accident_count }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="image_analysis_score">Image Analysis Score</label>
+            <input
+                type="number"
+                step="any"
+                id="image_analysis_score"
+                name="image_analysis_score"
+                placeholder="Enter image analysis score"
+                value="{{ request.POST.image_analysis_score }}"
+                class="{% if errors.image_analysis_score %}input-error{% endif %}"
+            >
+            {% if errors.image_analysis_score %}
+                <div class="field-error">{{ errors.image_analysis_score }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="anomaly_detected">Anomaly Detected</label>
+            <select
+                id="anomaly_detected"
+                name="anomaly_detected"
+                class="{% if errors.anomaly_detected %}input-error{% endif %}"
+            >
+                <option value="0" {% if request.POST.anomaly_detected == "0" %}selected{% endif %}>No</option>
+                <option value="1" {% if request.POST.anomaly_detected == "1" %}selected{% endif %}>Yes</option>
+            </select>
+            {% if errors.anomaly_detected %}
+                <div class="field-error">{{ errors.anomaly_detected }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="completion_percentage">Completion Percentage (%)</label>
+            <input
+                type="number"
+                step="any"
+                id="completion_percentage"
+                name="completion_percentage"
+                min="0"
+                max="100"
+                placeholder="e.g. 65"
+                value="{{ request.POST.completion_percentage }}"
+                class="{% if errors.completion_percentage %}input-error{% endif %}"
+            >
+            {% if errors.completion_percentage %}
+                <div class="field-error">{{ errors.completion_percentage }}</div>
+            {% endif %}
+        </div>
+
+        <button class="btn" type="submit">Predict Risk</button>
+
+    </form>
+
+
+    <!-- ==================================================
+         PREDICTION RESULT
+         ================================================== -->
+
+    {% if prediction %}
+
+        <div class="result result-{{ recommendation.color }}">
+            <div class="result-title">Predicted Risk Level</div>
+            <div class="risk-level-number">{{ prediction }}</div>
+            <div class="risk-label">{{ recommendation.label }}</div>
+            {% if confidence is not None %}
+                <div class="confidence">
+                    Model Confidence: <strong>{{ confidence|floatformat:2 }}%</strong>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if class_probabilities %}
+            <div class="probabilities">
+                <div class="probabilities-title">Risk Level Probabilities</div>
+                {% for cp in class_probabilities %}
+                    <div class="prob-row">
+                        <div class="prob-label">{{ cp.label }}</div>
+                        <div class="prob-bar-wrapper">
+                            <div class="prob-bar" style="width: {{ cp.probability }}%;"></div>
+                        </div>
+                        <div class="prob-value">{{ cp.probability }}%</div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if recommendation %}
+            <div class="recommendation">
+                <div class="recommendation-title">Risk Recommendations</div>
+                <ul>
+                    {% for point in recommendation.points %}
+                        <li>{{ point }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <button
+            class="btn-new-assessment"
+            onclick="resetForm()"
+        >
+            &#8635; Start New Assessment
+        </button>
+
+    {% endif %}
+
+
+    <!-- ==================================================
+         ERROR
+         ================================================== -->
+
+    {% if error %}
+        <div class="error">
+            <div class="error-title">Prediction Error</div>
+            <div>{{ error }}</div>
+        </div>
+    {% endif %}
+
+
+</div>
+
+
+<script>
+    function resetForm() {
+        document.querySelectorAll("input").forEach(function(input) {
+            input.value = "";
+            input.classList.remove("input-error");
+        });
+
+        document.querySelectorAll("select").forEach(function(select) {
+            select.selectedIndex = 0;
+            select.classList.remove("input-error");
+        });
+
+        document.querySelectorAll(".field-error").forEach(function(el) {
+            el.remove();
+        });
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+</script>
+
+
+</body>
+
+</html>
