@@ -27,3 +27,54 @@ Thumbs.db
 desktop.ini
 
 staticfiles/
+
+# Python
+
+**pycache**/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+
+venv/
+.venv/
+env/
+
+# Environment variables / secrets
+
+.env
+.env.*
+
+# Django
+
+db.sqlite3
+staticfiles/
+
+# Jupyter
+
+.ipynb_checkpoints/
+
+# Local development files
+
+*.log
+
+# IDE / editor files
+
+.vscode/
+.idea/
+
+# OS files
+
+.DS_Store
+Thumbs.db
+
+# Large / unrelated local datasets and analysis artifacts
+
+*.csv
+*.xlsx
+*.pkl
+*.png
+
+# Local notebooks not required by the deployed application
+
+*.ipynb
